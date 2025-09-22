@@ -9,70 +9,82 @@
 <body>
 
     <div class="page-container">
-        <main id="form-container">
-            <div class="header-container">
-                <h1>Composer Agent プロンプトジェネレーター</h1>
-            </div>
-            <p>曖昧なイメージからAIでプロンプトを生成し、詳細を調整して、Composer Agent向けのJSONプロンプトを作成します。</p>
+        <div class="header-container">
+            <h1>Lyria プロンプトジェネレーター</h1>
+            <p>曖昧なテキストから AI　でプロンプトを生成し、詳細を調整して、JSONプロンプトを作成します。</p>
+        </div>
+        <div class="content-container">
+            <main id="form-container">
+                <form id="music-form">
+                    <section class="config-section ai-section">
+                        <h2>1. AIでプロンプトを生成 (任意)</h2>
+                        <div class="form-group">
+                            <label for="vague-prompt">曖昧なイメージやテキスト</label>
+                            <textarea id="vague-prompt" name="vague-prompt" rows="3" placeholder="例: 雨の日の東京のカフェで流れているような、ジャジーで落ち着いた曲">A sad, beautiful, and emotional song for a movie ending scene.</textarea>
+                        </div>
+                        <button type="button" id="ai-generate-btn">AIでプロンプト項目を生成</button>
+                        <div id="ai-status"></div>
+                    </section>
+        
+                    <section class="config-section">
+                        <div class="header-container">
+                            <h2>2. プロンプトの構成要素</h2>
+                            <button type="button" id="show-samples-btn" class="secondary-btn">プロンプトのヒントを表示</button>
+                        </div>
+                        <p class="section-description">各項目を編集すると、右側のJSONがリアルタイムで更新されます。</p>
+                        <div class="form-group">
+                            <label for="bpm">BPM</label>
+                            <input type="number" id="bpm" name="bpm" value="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="genre">ジャンル・スタイル</label>
+                            <textarea id="genre" name="genre" rows="2">Deep Houseと80's Funkを合わせたような曲</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="instruments">楽器編成</label>
+                            <textarea id="instruments" name="instruments" rows="2">Jazz Piano、サックス、Electric Drums、ボーカルあり</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="mood">ムード・感情</label>
+                            <textarea id="mood" name="mood" rows="2">夜のクラブで聴くような少し落ち着いたDanceableな曲</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="length">曲の長さ</label>
+                            <textarea id="length" name="length" rows="1">2分前後</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="progression">曲の進行（構成）</label>
+                            <textarea id="progression" name="progression" rows="5">開始(8小節): ドラムとベースをミュート、Jazz Pianoとサックスのみで演奏。序盤: Jazz Pianoとサックス、ドラム、ベース、ボーカルを追加。中盤1(8小節): 小休止でJazz Pianoとボーカルだけのメロディライン。中盤2: Jazz Pianoとサックス、ドラム、ベース、ボーカルを追加。終盤(8小節): ドラムとベースのみ。</textarea>
+                        </div>
+                    </section>
+                </form>
+            </main>
     
-            <form id="music-form">
-                <section class="config-section ai-section">
-                    <h2>1. AIでプロンプトを生成 (任意)</h2>
+            <aside id="output-container">
+                <section id="favorites-section" class="config-section">
+                    <h2>お気に入りプロンプト</h2>
                     <div class="form-group">
-                        <label for="vague-prompt">曖昧なイメージやテキスト</label>
-                        <textarea id="vague-prompt" name="vague-prompt" rows="3" placeholder="例: 雨の日の東京のカフェで流れているような、ジャジーで落ち着いた曲">A sad, beautiful, and emotional song for a movie ending scene.</textarea>
+                        <label for="favorites-select">保存したプロンプトを選択</label>
+                        <select id="favorites-select"></select>
                     </div>
-                    <button type="button" id="ai-generate-btn">AIでプロンプト項目を生成</button>
-                    <div id="ai-status"></div>
-                </section>
-    
-                <section class="config-section">
-                    <div class="header-container">
-                        <h2>2. プロンプトの構成要素</h2>
-                        <button type="button" id="show-samples-btn" class="secondary-btn">プロンプトのヒントを表示</button>
-                    </div>
-                    <p class="section-description">各項目を編集すると、右側のJSONがリアルタイムで更新されます。</p>
-                    <div class="form-group">
-                        <label for="bpm">BPM</label>
-                        <input type="number" id="bpm" name="bpm" value="120">
-                    </div>
-                    <div class="form-group">
-                        <label for="genre">ジャンル・スタイル</label>
-                        <textarea id="genre" name="genre" rows="2">Deep Houseと80's Funkを合わせたような曲</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="instruments">楽器編成</label>
-                        <textarea id="instruments" name="instruments" rows="2">Jazz Piano、サックス、Electric Drums、ボーカルあり</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="mood">ムード・感情</label>
-                        <textarea id="mood" name="mood" rows="2">夜のクラブで聴くような少し落ち着いたDanceableな曲</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="length">曲の長さ</label>
-                        <textarea id="length" name="length" rows="1">2分前後</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="progression">曲の進行（構成）</label>
-                        <textarea id="progression" name="progression" rows="5">開始(8小節): ドラムとベースをミュート、Jazz Pianoとサックスのみで演奏。序盤: Jazz Pianoとサックス、ドラム、ベース、ボーカルを追加。中盤1(8小節): 小休止でJazz Pianoとボーカルだけのメロディライン。中盤2: Jazz Pianoとサックス、ドラム、ベース、ボーカルを追加。終盤(8小節): ドラムとベースのみ。</textarea>
+                    <div class="button-group">
+                        <button type="button" id="rename-favorite-btn" class="secondary-btn">名前を変更</button>
+                        <button type="button" id="delete-favorite-btn" class="secondary-btn">選択したプロンプトを削除</button>
                     </div>
                 </section>
-            </form>
-        </main>
 
-        <aside id="output-container">
-            <div class="form-group">
-                <label for="api-key">Gemini APIキー</label>
-                <input type="password" id="api-key" name="api-key" placeholder="ここにAPIキーを貼り付け">
-            </div>
-            <section id="output-section">
-                <div class="output-header">
-                    <h2>生成されたJSONプロンプト</h2>
-                    <button type="button" id="copy-btn" class="secondary-btn">コピー</button>
-                </div>
-                <textarea id="output-code" rows="10"></textarea>
-            </section>
-        </aside>
+                <section id="output-section">
+                    <div class="output-header">
+                        <h2>生成されたJSONプロンプト</h2>
+                        <div class="button-group">
+                            <button type="button" id="copy-btn" class="secondary-btn">コピー</button>
+                            <button type="button" id="favorite-btn" class="secondary-btn">お気に入りに追加</button>
+                        </div>
+                    </div>
+                    <textarea id="output-code" rows="20"></textarea>
+                </section>
+            </aside>
+        </div>
     </div>
 
     <div id="samples-modal" class="modal-hidden">
@@ -80,7 +92,15 @@
             <button id="close-modal-btn" class="close-btn">&times;</button>
             <h2>プロンプトのヒント</h2>
             
-            <h3>Instruments</h3>
+            <h3>ジャンル・スタイル (Music Genre)</h3>
+            <p><b>Electronic:</b> Acid Jazz, Ambient, Breakbeat, Chillout, Chiptune, Deep House, Disco Funk, Drum & Bass, Dubstep, EDM, Electro Swing, Glitch Hop, Grime, Hyperpop, Indie Electronic, Minimal Techno, Moombahton, Psytrance, Synthpop, Techno, Trance, Trap Beat, Trip Hop, Vaporwave, Witch house<br>
+            <b>Rock & Pop:</b> Alternative Country, Blues Rock, Classic Rock, Contemporary R&B, Garage Rock, G-funk, Indie Pop, K Pop, New Jack Swing, Piano Ballad, Post-Punk, 60s Psychedelic Rock, R&B, Shoegaze, Ska, Surf Rock<br>
+            <b>Hip Hop:</b> 808 Hip Hop Beat, Lo-Fi Hip Hop, Trap Beat<br>
+            <b>Jazz & Funk:</b> Acid Jazz, Bossa Nova, Funk Metal, G-funk, Jam Band, Jazz Fusion, Latin Jazz, Neo-Soul<br>
+            <b>Folk & World:</b> Afrobeat, Baroque, Bengal Baul, Bhangra, Bluegrass, Celtic Folk, Cumbia, Indian Classical, Irish Folk, Jamaican Dub, Marching Band, Merengue, Polka, Reggae, Reggaeton, Renaissance Music, Salsa<br>
+            <b>Other:</b> Orchestral Score</p>
+
+            <h3>楽器編成 (Instruments)</h3>
             <p><b>Basses:</b> 303 Acid Bass, 808 Hip Hop Beat, Boomy Bass, Precision Bass<br>
             <b>Drums & Percussion:</b> Conga Drums, Djembe, Drumline, Funk Drums, Glockenspiel, Hang Drum, Maracas, Marimba, Mbira, Steel Drum, Tabla, TR-909 Drum Machine, Vibraphone<br>
             <b>Guitars:</b> Acoustic Guitar, Balalaika Ensemble, Banjo, Bouzouki, Charango, Flamenco Guitar, Koto, Lyre, Mandolin, Persian Tar, Pipa, Shamisen, Sitar, Slide Guitar, Warm Acoustic Guitar<br>
@@ -90,20 +110,13 @@
             <b>Winds:</b> Alto Saxophone, Bagpipes, Bass Clarinet, Didgeridoo, Harmonica, Ocarina, Trumpet, Tuba, Woodwinds<br>
             <b>Other:</b> Kalimba, Metallic Twang</p>
 
-            <h3>音楽のジャンル (Music Genre)</h3>
-            <p><b>Electronic:</b> Acid Jazz, Ambient, Breakbeat, Chillout, Chiptune, Deep House, Disco Funk, Drum & Bass, Dubstep, EDM, Electro Swing, Glitch Hop, Grime, Hyperpop, Indie Electronic, Minimal Techno, Moombahton, Psytrance, Synthpop, Techno, Trance, Trap Beat, Trip Hop, Vaporwave, Witch house<br>
-            <b>Rock & Pop:</b> Alternative Country, Blues Rock, Classic Rock, Contemporary R&B, Garage Rock, G-funk, Indie Pop, K Pop, New Jack Swing, Piano Ballad, Post-Punk, 60s Psychedelic Rock, R&B, Shoegaze, Ska, Surf Rock<br>
-            <b>Hip Hop:</b> 808 Hip Hop Beat, Lo-Fi Hip Hop, Trap Beat<br>
-            <b>Jazz & Funk:</b> Acid Jazz, Bossa Nova, Funk Metal, G-funk, Jam Band, Jazz Fusion, Latin Jazz, Neo-Soul<br>
-            <b>Folk & World:</b> Afrobeat, Baroque, Bengal Baul, Bhangra, Bluegrass, Celtic Folk, Cumbia, Indian Classical, Irish Folk, Jamaican Dub, Marching Band, Merengue, Polka, Reggae, Reggaeton, Renaissance Music, Salsa<br>
-            <b>Other:</b> Orchestral Score</p>
-
-            <h3>気分/説明 (Mood/Description)</h3>
+            <h3>ムード・感情 (Mood/Description)</h3>
             <p><b>Sound Qualities:</b> Acoustic Instruments, Ambient, Bright Tones, Chill, Crunchy Distortion, Danceable, Dreamy, Echo, Emotional, Ethereal Ambience, Experimental, Fat Beats, Funky, Glitchy Effects, Lo-fi, Ominous Drone, Psychedelic, Rich Orchestration, Saturated Tones, Subdued Melody, Sustained Chords, Swirling Phasers, Tight Groove, Unsettling, Upbeat, Virtuoso, Weird Noises<br>
             <b>Performance:</b> Huge Drop, Live Performance</p>
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

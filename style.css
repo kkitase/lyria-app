@@ -15,10 +15,13 @@ body {
 }
 
 .page-container {
+    padding: 2rem;
+}
+
+.content-container {
     display: flex;
     flex-direction: row;
     gap: 2rem;
-    padding: 2rem;
     align-items: flex-start;
 }
 
@@ -32,8 +35,9 @@ main#form-container {
 
 aside#output-container {
     width: 40%;
-    position: sticky;
-    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .output-container .form-group {
@@ -45,6 +49,7 @@ aside#output-container {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 2rem; /* Add some space below the header */
 }
 
 h1 {
@@ -52,10 +57,9 @@ h1 {
     margin: 0;
 }
 
-p {
+.header-container > p {
     color: var(--text-secondary-color);
     margin-top: -1rem;
-    align-self: flex-start;
 }
 
 .section-description {
@@ -79,7 +83,8 @@ form {
     gap: 1rem;
 }
 
-.config-section h2 {
+.config-section h2,
+#output-section h2 {
     margin: 0 0 1rem 0;
     color: var(--primary-color);
     border-bottom: 1px solid var(--border-color);
@@ -155,7 +160,6 @@ textarea {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
-    height: calc(100vh - 12rem); /* Adjusted for API key field */
     display: flex;
     flex-direction: column;
 }
@@ -165,10 +169,6 @@ textarea {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
-}
-
-#output-section h2 {
-     margin: 0;
 }
 
 pre {
@@ -242,4 +242,9 @@ pre {
     text-align: left;
     line-height: 1.6;
     color: var(--text-color);
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
 }

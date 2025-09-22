@@ -1,0 +1,12 @@
+// !!! 警告: このファイルに実際のAPIキーを記述したままコミットしないでください !!!
+// このファイルはブラウザからアクセス可能であり、APIキーが外部に漏洩する危険性があります。
+// ローカルでのテスト目的でのみ、一時的にキーを貼り付けてください。
+// [Google AI Studio] (https://aistudio.google.com/apikey) からキーを作成してここに貼り付けてください（キーは公開しないように注意してください）
+
+const CONFIG = {
+  GEMINI_API_KEY: 'YOUR_API_KEY_HERE'
+};
+
+function getConfig(key) {
+  return CONFIG[key];
+}

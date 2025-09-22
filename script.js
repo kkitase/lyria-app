@@ -2,15 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('music-form');
     const outputCode = document.getElementById('output-code');
     const copyBtn = document.getElementById('copy-btn');
+    const favoriteBtn = document.getElementById('favorite-btn');
 
     const aiGenerateBtn = document.getElementById('ai-generate-btn');
-    const apiKeyInput = document.getElementById('api-key');
     const vaguePromptInput = document.getElementById('vague-prompt');
     const aiStatus = document.getElementById('ai-status');
 
     const modal = document.getElementById('samples-modal');
     const showSamplesBtn = document.getElementById('show-samples-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
+
+    const favoritesSelect = document.getElementById('favorites-select');
+    const renameFavoriteBtn = document.getElementById('rename-favorite-btn');
+    const deleteFavoriteBtn = document.getElementById('delete-favorite-btn');
+
+    let promptFavorites = [];
+    let currentFavoriteId = null;
 
     // --- Modal Logic ---
     showSamplesBtn.addEventListener('click', () => {
@@ -29,14 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- AI Generation Logic ---
     aiGenerateBtn.addEventListener('click', async () => {
-        const apiKey = apiKeyInput.value.trim();
-        const vaguePrompt = vaguePromptInput.value.trim();
-
-        if (!apiKey) {
-            aiStatus.textContent = 'エラー: APIキーを入力してください。';
+        const apiKey = getConfig('GEMINI_API_KEY');
+        if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+            aiStatus.textContent = 'エラー: config.js ファイルに有効な API キーが設定されていません。';
             aiStatus.style.color = 'red';
             return;
         }
+
+        const vaguePrompt = vaguePromptInput.value.trim();
 
         if (!vaguePrompt) {
             aiStatus.textContent = 'エラー: 曖昧なイメージやテキストを入力してください。';
@@ -112,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Real-time JSON Generation Logic ---
     const updateJsonOutput = () => {
         const formData = new FormData(form);
-        const parts = [];
+        const finalOutput = {};
         const fields = {
             'BPM': formData.get('bpm'),
             'ジャンル': formData.get('genre'),
@@ -125,19 +132,136 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const [key, value] of Object.entries(fields)) {
             const trimmedValue = value.trim();
             if (trimmedValue) {
-                parts.push(`${key}: ${trimmedValue}`);
+                finalOutput[key] = trimmedValue;
             }
         }
 
-        const requestString = parts.join(', ');
-        const finalOutput = { request: requestString };
         outputCode.value = JSON.stringify(finalOutput, null, 4);
     };
 
-    // フォームの任意の入力が変更されたらJSONを更新
-    form.addEventListener('input', updateJsonOutput);
-    // 初期表示時にもJSONを生成
-    updateJsonOutput();
+    // --- Form Input Logic ---
+    form.addEventListener('input', () => {
+        updateJsonOutput();
+    });
+    
+    // --- Favorites Logic ---
+    const savePromptFavorites = () => {
+        localStorage.setItem('promptFavorites', JSON.stringify(promptFavorites));
+    };
+
+    const renderPromptFavorites = () => {
+        favoritesSelect.innerHTML = '';
+        const defaultOption = new Option('保存したプロンプトを選択', '');
+        favoritesSelect.add(defaultOption);
+
+        promptFavorites.forEach(fav => {
+            const option = new Option(fav.title, fav.id);
+            favoritesSelect.add(option);
+        });
+    };
+
+    const loadPromptFavorites = () => {
+        const storedFavorites = localStorage.getItem('promptFavorites');
+        if (storedFavorites) {
+            promptFavorites = JSON.parse(storedFavorites);
+            renderPromptFavorites();
+        }
+    };
+
+    favoriteBtn.addEventListener('click', () => {
+        if (currentFavoriteId) {
+            // Overwrite existing favorite
+            const favorite = promptFavorites.find(fav => fav.id === currentFavoriteId);
+            if (favorite) {
+                favorite.content = {
+                    bpm: document.getElementById('bpm').value,
+                    genre: document.getElementById('genre').value,
+                    instruments: document.getElementById('instruments').value,
+                    mood: document.getElementById('mood').value,
+                    length: document.getElementById('length').value,
+                    progression: document.getElementById('progression').value,
+                };
+                savePromptFavorites();
+                alert('お気に入りを上書き保存しました。');
+            }
+        } else {
+            // Add new favorite
+            const title = prompt('このプロンプトのタイトルを入力してください:');
+            if (title) {
+                const newFavorite = {
+                    id: Date.now(),
+                    title: title,
+                    content: {
+                        bpm: document.getElementById('bpm').value,
+                        genre: document.getElementById('genre').value,
+                        instruments: document.getElementById('instruments').value,
+                        mood: document.getElementById('mood').value,
+                        length: document.getElementById('length').value,
+                        progression: document.getElementById('progression').value,
+                    }
+                };
+                promptFavorites.push(newFavorite);
+                savePromptFavorites();
+                renderPromptFavorites();
+                favoritesSelect.value = newFavorite.id;
+                currentFavoriteId = newFavorite.id;
+                favoriteBtn.textContent = 'お気に入りを上書き保存';
+            }
+        }
+    });
+
+    favoritesSelect.addEventListener('change', () => {
+        const selectedId = favoritesSelect.value;
+        if (selectedId) {
+            const selectedFav = promptFavorites.find(fav => fav.id == selectedId);
+            if (selectedFav) {
+                document.getElementById('bpm').value = selectedFav.content.bpm;
+                document.getElementById('genre').value = selectedFav.content.genre;
+                document.getElementById('instruments').value = selectedFav.content.instruments;
+                document.getElementById('mood').value = selectedFav.content.mood;
+                document.getElementById('length').value = selectedFav.content.length;
+                document.getElementById('progression').value = selectedFav.content.progression;
+                updateJsonOutput();
+                currentFavoriteId = selectedFav.id;
+                favoriteBtn.textContent = 'お気に入りを上書き保存';
+            }
+        } else {
+            currentFavoriteId = null;
+            favoriteBtn.textContent = 'お気に入りに追加';
+        }
+    });
+
+    renameFavoriteBtn.addEventListener('click', () => {
+        const selectedId = favoritesSelect.value;
+        if (selectedId) {
+            const favorite = promptFavorites.find(fav => fav.id == selectedId);
+            if (favorite) {
+                const newTitle = prompt('新しいタイトルを入力してください:', favorite.title);
+                if (newTitle && newTitle.trim() !== '') {
+                    favorite.title = newTitle.trim();
+                    savePromptFavorites();
+                    const previousSelectedId = favoritesSelect.value;
+                    renderPromptFavorites();
+                    favoritesSelect.value = previousSelectedId;
+                }
+            }
+        } else {
+            alert('名前を変更するお気に入りをドロップダウンから選択してください。');
+        }
+    });
+
+    deleteFavoriteBtn.addEventListener('click', () => {
+        const selectedId = favoritesSelect.value;
+        if (selectedId) {
+            promptFavorites = promptFavorites.filter(fav => fav.id != selectedId);
+            savePromptFavorites();
+            renderPromptFavorites();
+            form.reset();
+            updateJsonOutput();
+            currentFavoriteId = null;
+            favoriteBtn.textContent = 'お気に入りに追加';
+        }
+    });
 
     // --- Copy to Clipboard Logic ---
     copyBtn.addEventListener('click', () => {
@@ -150,4 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('コピーに失敗しました', err);
         });
     });
+
+    // Initial Load
+    updateJsonOutput();
+    loadPromptFavorites();
 });
