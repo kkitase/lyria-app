@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const requestString = parts.join(', ');
         const finalOutput = { request: requestString };
-        outputCode.textContent = JSON.stringify(finalOutput, null, 4);
+        outputCode.value = JSON.stringify(finalOutput, null, 4);
     };
 
     // フォームの任意の入力が変更されたらJSONを更新
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Copy to Clipboard Logic ---
     copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(outputCode.textContent).then(() => {
+        navigator.clipboard.writeText(outputCode.value).then(() => {
             copyBtn.textContent = 'コピーしました！';
             setTimeout(() => {
                 copyBtn.textContent = 'コピー';
