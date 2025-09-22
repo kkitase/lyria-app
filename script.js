@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('music-form');
-    const generateBtn = document.getElementById('generate-btn');
     const outputCode = document.getElementById('output-code');
-    
+    const copyBtn = document.getElementById('copy-btn');
+
     const aiGenerateBtn = document.getElementById('ai-generate-btn');
     const apiKeyInput = document.getElementById('api-key');
     const vaguePromptInput = document.getElementById('vague-prompt');
@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('progression').value = parts[5].replace(/進行:/i, '').trim();
                 aiStatus.textContent = 'プロンプトが生成されました。各項目を確認・編集してください。';
                 aiStatus.style.color = 'green';
+                updateJsonOutput(); // AI生成後、JSON出力を更新
             } else {
                 throw new Error('AIからの応答形式が正しくありません。');
             }
@@ -108,12 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- JSON Generation Logic ---
-    generateBtn.addEventListener('click', () => {
+    // --- Real-time JSON Generation Logic ---
+    const updateJsonOutput = () => {
         const formData = new FormData(form);
-
         const parts = [];
-
         const fields = {
             'BPM': formData.get('bpm'),
             'ジャンル': formData.get('genre'),
@@ -131,11 +130,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const requestString = parts.join(', ');
-
-        const finalOutput = {
-            request: requestString
-        };
-
+        const finalOutput = { request: requestString };
         outputCode.textContent = JSON.stringify(finalOutput, null, 4);
+    };
+
+    // フォームの任意の入力が変更されたらJSONを更新
+    form.addEventListener('input', updateJsonOutput);
+    // 初期表示時にもJSONを生成
+    updateJsonOutput();
+
+    // --- Copy to Clipboard Logic ---
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(outputCode.textContent).then(() => {
+            copyBtn.textContent = 'コピーしました！';
+            setTimeout(() => {
+                copyBtn.textContent = 'コピー';
+            }, 2000);
+        }).catch(err => {
+            console.error('コピーに失敗しました', err);
+        });
     });
 });
